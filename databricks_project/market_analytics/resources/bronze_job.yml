@@ -1,0 +1,22 @@
+resources:
+  jobs:
+    bronze_ingestion:
+      name: bronze-ingestion
+
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
+
+      tasks:
+        - task_key: ingest
+          environment_key: default
+          spark_python_task:
+            python_file: ../src/bronze/bronze_ingestion.py
+            parameters:
+              - "--process_name=dailyPricingSourceIngest"
+              - "--source_base_url=https://retailpricing.blob.core.windows.net/"
+              - "--source_folder=daily-pricing/"
+              - "--sink_storage_account=${var.storage_account_name}"
+              - "--sink_layer_name=bronze"
+              - "--sink_folder_name=daily-pricing"

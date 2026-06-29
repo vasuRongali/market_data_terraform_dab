@@ -1,0 +1,10 @@
+resources:
+  jobs:
+    setup_ddl_job:
+      name: setup-ddl-job
+      tasks:
+        - task_key: create_tables
+          sql_task:
+            file:
+              path: ../ddl/setup_tables.sql
+            warehouse_id: ${var.sql_warehouse_id}
