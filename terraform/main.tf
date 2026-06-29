@@ -89,3 +89,15 @@ resource "databricks_external_location" "gold" {
   credential_name = databricks_storage_credential.storage_credential.name
   comment         = "Gold External Location"
 }
+
+
+resource "databricks_catalog" "dev_catalog" {
+  name    = "dev_catalog"
+  comment = "Development catalog"
+}
+
+resource "databricks_schema" "bronze" {
+  catalog_name = databricks_catalog.dev_catalog.name
+  name         = "bronze"
+  comment      = "Bronze layer schema"
+}

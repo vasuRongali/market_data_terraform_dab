@@ -1,0 +1,40 @@
+bundle:
+  name: market_analytics
+  uuid: 33b609a4-bcbe-4d3a-b355-b174fd3101dd
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: The catalog to use
+  schema:
+    description: The schema to use
+  sql_warehouse_id:
+    description: SQL warehouse to run DDL tasks on
+  storage_account_name:
+    description: ADLS Storage Account Name
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-7405608727031933.13.azuredatabricks.net
+    variables:
+      catalog: bronze
+      schema: ${workspace.current_user.short_name}
+      sql_warehouse_id: "3aea5317a0387c66"
+      storage_account_name: "scmarketdatadev"
+  prod:
+    mode: production
+    workspace:
+      host: https://adb-7405608727031933.13.azuredatabricks.net
+      root_path: /Workspace/Users/rockykalyankumar@gmail.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog: bronze
+      schema: prod
+      sql_warehouse_id: "3aea5317a0387c66"
+    permissions:
+      - user_name: rockykalyankumar@gmail.com
+        level: CAN_MANAGE
