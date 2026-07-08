@@ -8,3 +8,11 @@ resources:
             file:
               path: ../ddl/setup_tables.sql
             warehouse_id: ${var.sql_warehouse_id}
+    bronze_ddl_job:
+      name: bronze-ddl-job
+      tasks:
+        - task_key: create_tables
+          sql_task:
+            file:
+              path: ../ddl/bronze_tables.sql
+            warehouse_id: ${var.sql_warehouse_id}

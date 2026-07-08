@@ -7,7 +7,6 @@ resources:
         - environment_key: default
           spec:
             client: "1"
-
       tasks:
         - task_key: ingest
           environment_key: default
@@ -19,4 +18,12 @@ resources:
               - "--source_folder=daily-pricing/"
               - "--sink_storage_account=${var.storage_account_name}"
               - "--sink_layer_name=bronze"
-              - "--sink_folder_name=daily-pricing"
+              - "--sink_folder_name=daily-pricing-bronze"
+        - task_key: transform_daily_pricing_silver
+          environment_key: default
+          depends_on:
+            - task_key: ingest # waits for bronze to finish first
+          spark_python_task:
+            python_file: ../src/silver/transform_daily_pricing.py
+            parameters:
+              - "--catalog=silver"

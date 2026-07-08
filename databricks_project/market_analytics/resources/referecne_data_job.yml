@@ -1,0 +1,69 @@
+resources:
+  jobs:
+    bronze_ingest_reference_data:
+      name: "bronze-ingest-reference-data-${bundle.target}"
+
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
+
+      tasks:
+        - task_key: ingest_market_address
+          environment_key: default
+          spark_python_task:
+            python_file: ../src/bronze/ingest_pricing_reference.py
+            parameters:
+              - "--source_table_name=masterdata.market_address"
+              - "--jdbc_server=asqludacoursesserver.database.windows.net"
+              - "--jdbc_database=asqludacourses"
+              - "--secret_scope=pricing-db-secrets"
+              - "--sink_storage_account=${var.storage_account_name}"
+
+        - task_key: ingest_country_profile
+          environment_key: default
+          spark_python_task:
+            python_file: ../src/bronze/ingest_pricing_reference.py
+            parameters:
+              - "--source_table_name=masterdata.country_profile"
+              - "--jdbc_server=asqludacoursesserver.database.windows.net"
+              - "--jdbc_database=asqludacourses"
+              - "--secret_scope=pricing-db-secrets"
+              - "--sink_storage_account=${var.storage_account_name}"
+
+        - task_key: ingest_exchange_rates
+          environment_key: default
+          spark_python_task:
+            python_file: ../src/bronze/ingest_pricing_reference.py
+            parameters:
+              - "--source_table_name=masterdata.exchange_rates"
+              - "--jdbc_server=asqludacoursesserver.database.windows.net"
+              - "--jdbc_database=asqludacourses"
+              - "--secret_scope=pricing-db-secrets"
+              - "--sink_storage_account=${var.storage_account_name}"
+
+        - task_key: ingest_domestic_product_codes
+          environment_key: default
+          spark_python_task:
+            python_file: ../src/bronze/ingest_pricing_reference.py
+            parameters:
+              - "--source_table_name=masterdata.domestic_product_codes"
+              - "--jdbc_server=asqludacoursesserver.database.windows.net"
+              - "--jdbc_database=asqludacourses"
+              - "--secret_scope=pricing-db-secrets"
+              - "--sink_storage_account=${var.storage_account_name}"
+
+        - task_key: ingest_global_item_codes
+          environment_key: default
+          spark_python_task:
+            python_file: ../src/bronze/ingest_pricing_reference.py
+            parameters:
+              - "--source_table_name=masterdata.global_item_codes"
+              - "--jdbc_server=asqludacoursesserver.database.windows.net"
+              - "--jdbc_database=asqludacourses"
+              - "--secret_scope=pricing-db-secrets"
+              - "--sink_storage_account=${var.storage_account_name}"
+
+      schedule:
+        quartz_cron_expression: "0 0 5 * * ?"
+        timezone_id: "UTC"

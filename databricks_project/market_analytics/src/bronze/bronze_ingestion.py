@@ -2,7 +2,7 @@ import argparse
 from datetime import datetime
 import pandas as pd
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import current_timestamp
+from pyspark.sql.functions import col, current_timestamp
 
 
 def get_next_source_file_date(spark: SparkSession, process_name: str) -> str:
@@ -32,14 +32,17 @@ def fetch_source_data(source_url: str) -> pd.DataFrame:
 def write_to_bronze(spark: SparkSession, pandas_df: pd.DataFrame, sink_path: str):
     """Convert to Spark DataFrame and append to the bronze landing zone."""
     spark_df = spark.createDataFrame(pandas_df)
+
     (
         spark_df
         .withColumn("source_file_load_date", current_timestamp())
         .write
+        .format("delta")
         .mode("append")
-        .option("header", "true")
-        .csv(sink_path)
+        .option("mergeSchema", "true")
+        .save(sink_path)
     )
+
     print(f"Wrote {spark_df.count()} rows to {sink_path}")
 
 
