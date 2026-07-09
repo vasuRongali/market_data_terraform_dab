@@ -16,3 +16,9 @@ resources:
             file:
               path: ../ddl/bronze_tables.sql
             warehouse_id: ${var.sql_warehouse_id}
+
+        - task_key: gold_tables
+          sql_task:
+            file:
+              path: ../ddl/gold_tables.sql
+            warehouse_id: ${var.sql_warehouse_id}

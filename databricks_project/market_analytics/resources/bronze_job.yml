@@ -27,3 +27,30 @@ resources:
             python_file: ../src/silver/transform_daily_pricing.py
             parameters:
               - "--catalog=silver"
+        - task_key: transform_dimensions_gold
+          environment_key: default
+          depends_on:
+            - task_key: transform_daily_pricing_silver # waits for silver to finish first
+          spark_python_task:
+            python_file: ../src/gold/transform_dimensions.py
+            parameters:
+              - "--catalog=gold"
+
+        - task_key: transform_date_dim
+          environment_key: default
+          depends_on:
+            - task_key: transform_daily_pricing_silver # waits for silver to finish first
+          spark_python_task:
+            python_file: ../src/gold/transform_date.py
+            parameters:
+              - "--catalog=gold"
+
+        - task_key: transform_fact_pricing_gold
+          environment_key: default
+          depends_on:
+            - task_key: transform_date_dim
+            - task_key: transform_dimensions_gold # waits for silver to finish first
+          spark_python_task:
+            python_file: ../src/gold/transform_fact.py
+            parameters:
+              - "--catalog=gold"
