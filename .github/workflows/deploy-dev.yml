@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: databricks/setup-cli@main
       - name: Deploy bundle to dev
-        working-directory: ./terraform  # or wherever your databricks.yml lives
+        working-directory: ./databricks_project/market_analytics # or wherever your databricks.yml lives
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }}
           DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID_DEV }}

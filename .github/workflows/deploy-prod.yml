@@ -8,12 +8,12 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: Prod   # optional: enables GitHub "required reviewers" gate
+    environment: Prod # optional: enables GitHub "required reviewers" gate
     steps:
       - uses: actions/checkout@v4
       - uses: databricks/setup-cli@main
       - name: Deploy bundle to prod
-        working-directory: ./terraform
+        working-directory: ./databricks_project/market_analytics
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_PROD }}
           DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID_PROD }}
