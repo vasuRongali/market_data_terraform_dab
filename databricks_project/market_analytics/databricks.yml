@@ -14,6 +14,12 @@ variables:
     description: SQL warehouse to run DDL tasks on
   storage_account_name:
     description: ADLS Storage Account Name
+  secret_scope:
+    description: Databricks secret scope for JDBC credentials
+  secret_username_key:
+    description: Secret key for JDBC username
+  secret_password_key:
+    description: Secret key for JDBC password
 
 targets:
   dev:
@@ -26,15 +32,22 @@ targets:
       schema: ${workspace.current_user.short_name}
       sql_warehouse_id: "3aea5317a0387c66"
       storage_account_name: "scmarketdatadev"
+      secret_scope: "pricing-db-secrets"
+      secret_username_key: "db-username"
+      secret_password_key: "db-password"
   prod:
     mode: production
     workspace:
-      host: https://adb-7405608727031933.13.azuredatabricks.net
+      host: https://adb-7405610997498778.18.azuredatabricks.net
       root_path: /Workspace/Users/rockykalyankumar@gmail.com/.bundle/${bundle.name}/${bundle.target}
     variables:
       catalog: bronze
       schema: prod
-      sql_warehouse_id: "3aea5317a0387c66"
+      sql_warehouse_id: "3485f5aa33cab8d8"
+      storage_account_name: "scmarketdataprod"
+      secret_scope: "pricing-db-secrets-prod"
+      secret_username_key: "db-username"
+      secret_password_key: "db-password"
     permissions:
       - user_name: rockykalyankumar@gmail.com
         level: CAN_MANAGE

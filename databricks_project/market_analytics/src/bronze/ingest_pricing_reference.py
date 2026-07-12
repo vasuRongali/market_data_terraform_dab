@@ -18,14 +18,16 @@ def get_jdbc_connection_url(
     server: str,
     database: str,
     secret_scope: str,
+    secret_username_key: str,
+    secret_password_key: str,
 ) -> tuple[str, dict]:
 
     logger.info("Reading database credentials from secret scope: %s", secret_scope)
 
     dbutils = DBUtils(spark)
 
-    username = dbutils.secrets.get(scope=secret_scope, key="db-username")
-    password = dbutils.secrets.get(scope=secret_scope, key="db-password")
+    username = dbutils.secrets.get(scope=secret_scope, key=secret_username_key)
+    password = dbutils.secrets.get(scope=secret_scope, key=secret_password_key)
 
     logger.info("Database credentials retrieved successfully.")
 
@@ -102,6 +104,8 @@ def main():
     parser.add_argument("--jdbc_server", required=True)
     parser.add_argument("--jdbc_database", required=True)
     parser.add_argument("--secret_scope", required=True)
+    parser.add_argument("--secret_username_key", default="db-username")
+    parser.add_argument("--secret_password_key", default="db-password")
     parser.add_argument("--sink_storage_account", required=True)
     parser.add_argument("--sink_layer_name", default="bronze")
     parser.add_argument("--sink_folder_name", default="reference-data")
@@ -125,7 +129,9 @@ def main():
             spark,
             args.jdbc_server,
             args.jdbc_database,
-            args.secret_scope
+            args.secret_scope,
+            args.secret_username_key,
+            args.secret_password_key,
         )
 
         logger.info("Fetching source data.")

@@ -77,3 +77,17 @@ USING DELTA
 LOCATION 'abfss://gold@scmarketdatadev.dfs.core.windows.net/market/fact_daily_pricing';
 
 
+CREATE TABLE IF NOT EXISTS gold.market.dim_product_scd2 (
+    product_sk BIGINT,
+    product_id BIGINT,
+    productgroup_name STRING,
+    product_name STRING,
+    effective_start_date TIMESTAMP,
+    effective_end_date TIMESTAMP,
+    is_current BOOLEAN,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+)
+USING DELTA
+LOCATION 'abfss://gold@scmarketdatadev.dfs.core.windows.net/market/dim_product_scd2';
+
