@@ -18,5 +18,6 @@ jobs:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_PROD }}
           DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID_PROD }}
           DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET_PROD }}
+          DATABRICKS_AUTH_TYPE: oauth-m2m
         run: |
           databricks bundle deploy -t prod
