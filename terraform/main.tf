@@ -11,15 +11,15 @@ resource "azurerm_databricks_workspace" "workspace" {
 }
 
 resource "azurerm_storage_account" "adls" {
-  name                     = var.storage_account_name
-  resource_group_name      = azurerm_resource_group.rg.name
-  location                 = azurerm_resource_group.rg.location
+  name                = var.storage_account_name
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
 
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  account_kind             = "StorageV2"
-  is_hns_enabled           = true
+  account_kind   = "StorageV2"
+  is_hns_enabled = true
 }
 
 resource "azurerm_databricks_access_connector" "access_connector" {
@@ -59,7 +59,7 @@ resource "azurerm_storage_container" "gold" {
 
 
 resource "databricks_storage_credential" "storage_credential" {
-  name = "sc-market-data-dev"
+  name = var.storage_credential_name
 
   azure_managed_identity {
     access_connector_id = azurerm_databricks_access_connector.access_connector.id
@@ -68,36 +68,41 @@ resource "databricks_storage_credential" "storage_credential" {
   comment = "Storage credential for ADLS Gen2"
 }
 
-
 resource "databricks_external_location" "bronze" {
-  name            = "bronze_ext_loc"
+  name            = "${var.environment}_bronze_ext_loc"
   url             = "abfss://bronze@${azurerm_storage_account.adls.name}.dfs.core.windows.net/"
   credential_name = databricks_storage_credential.storage_credential.name
   comment         = "Bronze External Location"
 }
 
 resource "databricks_external_location" "silver" {
-  name            = "silver_ext_loc"
+  name            = "${var.environment}_silver_ext_loc"
   url             = "abfss://silver@${azurerm_storage_account.adls.name}.dfs.core.windows.net/"
   credential_name = databricks_storage_credential.storage_credential.name
   comment         = "Silver External Location"
 }
 
 resource "databricks_external_location" "gold" {
-  name            = "gold_ext_loc"
+  name            = "${var.environment}_gold_ext_loc"
   url             = "abfss://gold@${azurerm_storage_account.adls.name}.dfs.core.windows.net/"
   credential_name = databricks_storage_credential.storage_credential.name
   comment         = "Gold External Location"
 }
 
-
-resource "databricks_catalog" "dev_catalog" {
-  name    = "dev_catalog"
-  comment = "Development catalog"
+resource "databricks_catalog" "bronze" {
+  name         = "${var.environment}_bronze"
+  comment      = "${title(var.environment)} bronze catalog"
+  storage_root = databricks_external_location.bronze.url
 }
 
-resource "databricks_schema" "bronze" {
-  catalog_name = databricks_catalog.dev_catalog.name
-  name         = "bronze"
-  comment      = "Bronze layer schema"
+resource "databricks_catalog" "silver" {
+  name         = "${var.environment}_silver"
+  comment      = "${title(var.environment)} silver catalog"
+  storage_root = databricks_external_location.silver.url
+}
+
+resource "databricks_catalog" "gold" {
+  name         = "${var.environment}_gold"
+  comment      = "${title(var.environment)} gold catalog"
+  storage_root = databricks_external_location.gold.url
 }

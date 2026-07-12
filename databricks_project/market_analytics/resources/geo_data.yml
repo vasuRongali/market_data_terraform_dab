@@ -1,0 +1,72 @@
+resources:
+  jobs:
+    location_weather:
+      name: location_weather
+
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
+      tasks:
+        - task_key: ingest_location
+          environment_key: default
+          spark_python_task:
+            python_file: ../src/bronze/geo_location.py
+            parameters:
+              - "--process_name=geo_location_ingest"
+              - "--source_api_base_url=https://geocoding-api.open-meteo.com/v1/search?name="
+              - "--source_api_options=&count=10&language=en&format=json"
+              - "--source_catalog=gold"
+              - "--source_schema=market"
+              - "--source_table=dim_market"
+              - "--source_market_limit=10"
+              - "--sink_storage_account=${var.storage_account_name}"
+              - "--sink_layer_name=bronze"
+              - "--sink_folder_name=geo-location"
+        - task_key: transform_geo_location_silver
+          environment_key: default
+          depends_on:
+            - task_key: ingest_location
+          spark_python_task:
+            python_file: ../src/silver/geo_location_transform.py
+            parameters:
+              - "--catalog=silver"
+              - "--schema=market"
+              - "--table=geo_location_silver"
+
+        - task_key: ingest_weather
+          environment_key: default
+          spark_python_task:
+            python_file: ../src/bronze/geo_weather.py
+            parameters:
+              - "--process_name=geo_weather_ingest"
+              - "--source_api_base_url=https://archive-api.open-meteo.com/v1/archive?latitude="
+              - "--source_api_options=&daily=temperature_2m_max,temperature_2m_min,rain_sum"
+              - "--source_catalog=silver"
+              - "--source_schema=market"
+              - "--source_table=geo_location_silver"
+              - "--start_date=2023-01-01"
+              - "--end_date=2024-01-01"
+              - "--sink_storage_account=${var.storage_account_name}"
+              - "--sink_layer_name=bronze"
+              - "--sink_folder_name=weather-data"
+        - task_key: transform_weather_data_silver
+          environment_key: default
+          depends_on:
+            - task_key: ingest_weather
+          spark_python_task:
+            python_file: ../src/silver/geo_weather_transform.py
+            parameters:
+              - "--catalog=silver"
+              - "--schema=market"
+              - "--table=weather_data_trans"
+
+        - task_key: final_reporting
+          environment_key: default
+          depends_on:
+            - task_key: transform_weather_data_silver
+            - task_key: transform_geo_location_silver
+          spark_python_task:
+            python_file: ../src/gold/reporting.py
+            parameters:
+              - "--catalog=gold"

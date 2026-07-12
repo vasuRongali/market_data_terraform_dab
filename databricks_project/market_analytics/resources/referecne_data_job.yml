@@ -17,7 +17,9 @@ resources:
               - "--source_table_name=masterdata.market_address"
               - "--jdbc_server=asqludacoursesserver.database.windows.net"
               - "--jdbc_database=asqludacourses"
-              - "--secret_scope=pricing-db-secrets"
+              - "--secret_scope=${var.secret_scope}"
+              - "--secret_username_key=${var.secret_username_key}"
+              - "--secret_password_key=${var.secret_password_key}"
               - "--sink_storage_account=${var.storage_account_name}"
 
         - task_key: ingest_country_profile
@@ -28,7 +30,9 @@ resources:
               - "--source_table_name=masterdata.country_profile"
               - "--jdbc_server=asqludacoursesserver.database.windows.net"
               - "--jdbc_database=asqludacourses"
-              - "--secret_scope=pricing-db-secrets"
+              - "--secret_scope=${var.secret_scope}"
+              - "--secret_username_key=${var.secret_username_key}"
+              - "--secret_password_key=${var.secret_password_key}"
               - "--sink_storage_account=${var.storage_account_name}"
 
         - task_key: ingest_exchange_rates
@@ -39,7 +43,9 @@ resources:
               - "--source_table_name=masterdata.exchange_rates"
               - "--jdbc_server=asqludacoursesserver.database.windows.net"
               - "--jdbc_database=asqludacourses"
-              - "--secret_scope=pricing-db-secrets"
+              - "--secret_scope=${var.secret_scope}"
+              - "--secret_username_key=${var.secret_username_key}"
+              - "--secret_password_key=${var.secret_password_key}"
               - "--sink_storage_account=${var.storage_account_name}"
 
         - task_key: ingest_domestic_product_codes
@@ -50,7 +56,9 @@ resources:
               - "--source_table_name=masterdata.domestic_product_codes"
               - "--jdbc_server=asqludacoursesserver.database.windows.net"
               - "--jdbc_database=asqludacourses"
-              - "--secret_scope=pricing-db-secrets"
+              - "--secret_scope=${var.secret_scope}"
+              - "--secret_username_key=${var.secret_username_key}"
+              - "--secret_password_key=${var.secret_password_key}"
               - "--sink_storage_account=${var.storage_account_name}"
 
         - task_key: ingest_global_item_codes
@@ -61,7 +69,9 @@ resources:
               - "--source_table_name=masterdata.global_item_codes"
               - "--jdbc_server=asqludacoursesserver.database.windows.net"
               - "--jdbc_database=asqludacourses"
-              - "--secret_scope=pricing-db-secrets"
+              - "--secret_scope=${var.secret_scope}"
+              - "--secret_username_key=${var.secret_username_key}"
+              - "--secret_password_key=${var.secret_password_key}"
               - "--sink_storage_account=${var.storage_account_name}"
 
       schedule:

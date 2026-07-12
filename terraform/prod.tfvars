@@ -1,0 +1,8 @@
+resource_group_name       = "rg-market-data-prod"
+location                  = "East US"
+databricks_workspace_name = "dbw-market-data-prod"
+storage_account_name      = "scmarketdataprod"
+access_connector_name     = "ac-market-data-prod"
+environment               = "prod"
+catalog_name              = "prod_catalog"
+storage_credential_name   = "sc-market-data-prod"
